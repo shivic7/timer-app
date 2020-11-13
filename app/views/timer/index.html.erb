@@ -1,0 +1,52 @@
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<%= javascript_include_tag "jquery.countdown.min.js" %>
+<%= javascript_include_tag "jquery-backward-timer.min.js" %>
+
+<li><button class="button active" id="pomodoro" type="submit" value="Pomodoro" onclick="settimer(30)">Pomodoro</button></li>
+<li><button class="button active" id="short" type="submit" value="Pomodoro" onclick="settimer(5)">Short Break</button></li>
+<li><button class="button active" id="long" type="submit" value="Pomodoro" onclick="settimer(10)">Long Break</button></li>
+<h1 id="timer_default">25:00</h1>
+<li><button class="button active" id="pomodoro" type="submit" value="Pomodoro" onclick="startimer()">Start</button></li>
+<li><button class="button active" id="short" type="submit" value="Pomodoro" onclick="stoptimer()">Stop</button></li>
+<li><button class="button active" id="long" type="submit" value="Pomodoro" onclick="resettimer()">Reset</button></li>
+<script>
+const audio = new Audio('/test.mp3');
+var time_val = 25*60
+function settimer(time_val1){  
+  $('#timer_default').text(time_val1 + ":00")  
+  time_val = time_val1*60
+}
+
+  
+  function startimer(){
+    $('#timer_default').backward_timer({    
+      // specify timer's timeout value
+      seconds: time_val,
+      // timer's step (in seconds)
+      step: 1,
+      value_setter: undefined,
+      // Set output format
+      format: 'm%:s%',
+      // Handle event of exhausting
+      reset: function(timer){
+        seconds: time_val
+      },
+      on_exhausted: function(timer) {            
+        audio.play();
+      },
+      on_cancel: function(timer) {
+      },
+    });
+    $('#timer_default').backward_timer('start');
+  }
+  function stoptimer(){
+    $('#timer_default').backward_timer('cancel');
+  }
+  function resettimer(){
+    $('#timer_default').backward_timer('reset');
+  }
+  
+</script>
+<%= javascript_include_tag "jquery.countdown.min.js" %>
