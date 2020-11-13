@@ -4,19 +4,26 @@
 <%= javascript_include_tag "jquery.countdown.min.js" %>
 <%= javascript_include_tag "jquery-backward-timer.min.js" %>
 
-<li><button class="button active" id="pomodoro" type="submit" value="Pomodoro" onclick="settimer(30)">Pomodoro</button></li>
-<li><button class="button active" id="short" type="submit" value="Pomodoro" onclick="settimer(5)">Short Break</button></li>
-<li><button class="button active" id="long" type="submit" value="Pomodoro" onclick="settimer(10)">Long Break</button></li>
+<li><button class="button active" id="pomodoro" type="submit" value="Pomodoro" onclick="settimer(30,'pomodoro')">Pomodoro</button></li>
+<li><button class="button active" id="short" type="submit" value="Pomodoro" onclick="settimer(0.05,'short')">Short Break</button></li>
+<li><button class="button active" id="long" type="submit" value="Pomodoro" onclick="settimer(10,'long')">Long Break</button></li>
 <h1 id="timer_default">25:00</h1>
 <li><button class="button active" id="pomodoro" type="submit" value="Pomodoro" onclick="startimer()">Start</button></li>
 <li><button class="button active" id="short" type="submit" value="Pomodoro" onclick="stoptimer()">Stop</button></li>
 <li><button class="button active" id="long" type="submit" value="Pomodoro" onclick="resettimer()">Reset</button></li>
+<%@user_logs.each do |logs|%>
+  <%=logs.session%> 
+  <%=logs.start_time%> 
+  <%=logs.end_time%>
+<%end%>
 <script>
 const audio = new Audio('/test.mp3');
 var time_val = 25*60
-function settimer(time_val1){  
+var break_type = 'pomodoro'
+function settimer(time_val1,type_break){  
   $('#timer_default').text(time_val1 + ":00")  
   time_val = time_val1*60
+  break_type = type_break
 }
 
   
@@ -35,6 +42,7 @@ function settimer(time_val1){
       },
       on_exhausted: function(timer) {            
         audio.play();
+        update_user_log()
       },
       on_cancel: function(timer) {
       },
@@ -47,6 +55,14 @@ function settimer(time_val1){
   function resettimer(){
     $('#timer_default').backward_timer('reset');
   }
-  
+
+  function update_user_log(){
+    $.ajax({
+      url: "/update-log",
+      dataType: "json",
+      method: "POST",
+      data: {break_type: break_type, time_val: time_val, user_id: <%=params[:user_id]%>},
+      success: function (data){}
+    });
+  }
 </script>
-<%= javascript_include_tag "jquery.countdown.min.js" %>
